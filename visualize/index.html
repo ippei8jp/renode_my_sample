@@ -1,0 +1,138 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Renode visualize サンプル</title>
+  <!--
+  <link rel="stylesheet" href="assets/style.css">
+  -->
+</head>
+<body>
+  <div id="app">
+    <div id="container">
+      <img id="LED--UserLED_red"   class="interactive" src="assets/led_off.png" alt="UserLED_red"   title="UserLED_red"  >
+      <img id="LED--UserLED_green" class="interactive" src="assets/led_off.png" alt="UserLED_green" title="UserLED_green">
+      <img id="LED--UserLED_blue"  class="interactive" src="assets/led_off.png" alt="UserLED_blue"  title="UserLED_blue" >
+      <br>
+      <img id="BUTTON--UserButton0" class="interactive" src="assets/button_off.png" onclick="buttonPushed(this)" alt="UserButton0"   title="UserButton0">
+      <img id="BUTTON--UserButton1" class="interactive" src="assets/button_off.png" onclick="buttonPushed(this)" alt="UserButton1"   title="UserButton1">
+      <img id="BUTTON--UserButton2" class="interactive" src="assets/button_off.png" onclick="buttonPushed(this)" alt="UserButton2"   title="UserButton2">
+      
+    </div>
+  </div>
+  <script>
+    // WebSocket
+    var ws = new WebSocket("ws://localhost:9001/")
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+      
+      console.log('DOM fully loaded and parsed')
+      
+      // LED画像
+      imageRedLed   = new Image();imageRedLed.src   = "assets/led_red.png"
+      imageGreenLed = new Image();imageGreenLed.src = "assets/led_green.png"
+      imageBlueLed  = new Image();imageBlueLed.src  = "assets/led_blue.png"
+      imageOffLed   = new Image();imageOffLed.src   = "assets/led_off.png"
+
+      imageOffButton = new Image();imageOffButton.src   = "assets/button_off.png"
+      imageOnButton  = new Image();imageOnButton.src    = "assets/button_on.png"
+
+
+      // interactive クラスのエレメント一覧を取得
+      let interactives = document.getElementsByClassName("interactive")
+      
+      // エレメントのリストを作成
+      let els = {}
+      for (el of interactives) {
+        // エレメントのIDは「タイプ--名前」で設定しておく
+        let idSplit = el.id.split("--")
+        let type = idSplit[0]
+        let name = idSplit[1]
+        el.objectType = type  // タイプ設定
+        els[name] = el        // elsに追加
+      }
+      
+      // 初期状態を設定するものは設定する
+      for (el of Object.values(els)) {
+        if (el.objectType == "LED") {
+          // 初期状態はOFF
+          el.src = imageOffLed.src
+        } else if (el.objectType == "BUTTON") {
+          // 初期状態はOFF
+          el.src = imageOffButton.src
+          el.buttonStatus = 'OFF'
+        }
+      }
+
+      // WebSocket Open時処理
+      ws.onopen = function () {
+        console.log("onopen")
+      }
+
+      // WebSocket メッセージ受信時処理
+      ws.onmessage = function (e) {
+        // メッセージは「|」で区切られている
+        let split = e.data.split("|")
+        
+        let type = split[0]     // タイプ
+        let name = split[1]     // 名前
+        let message = split[2]  // メッセージ
+
+        if (type == "LED") {
+          let el = els[name]
+          if(el == null) {
+            return
+          }
+          if (message == "True") {
+            // 点灯
+            if (name.toUpperCase().includes('RED')) {
+              el.src = imageRedLed.src
+            } else if (name.toUpperCase().includes('GREEN')) {
+              el.src = imageGreenLed.src
+            } else if (name.toUpperCase().includes('BLUE')) {
+              el.src = imageBlueLed.src
+            } else {
+              el.src = imageOffLed.src
+            }
+          }
+          else {
+            // 消灯
+            el.src = imageOffLed.src
+          }
+        }
+      }
+
+      // WebSocket Close時処理
+      ws.onclose = function () {
+        console.log("onclose")
+      }
+
+      // WebSocket Error時処理
+      ws.onerror = function (e) {
+        console.log("onerror")
+        console.log(e)
+      }
+    })
+
+    function buttonPushed(el) {
+      console.log("buttonPushed")
+        // エレメントのIDは「タイプ--名前」で設定しておく
+        let idSplit = el.id.split("--")
+        let name = idSplit[1]
+        let status = el.buttonStatus
+        if (status == 'OFF') {
+          el.src = imageOnButton.src
+          el.buttonStatus = 'ON'
+        } else {
+          el.src = imageOffButton.src
+          el.buttonStatus = 'OFF'
+        }
+        console.log(`BUTTON|${name}|${el.buttonStatus}`)
+        ws.send(`BUTTON|${name}|${el.buttonStatus}`)
+    }
+
+
+  </script>
+</body>
+
+</html>

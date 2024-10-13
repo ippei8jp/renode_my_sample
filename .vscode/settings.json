@@ -1,0 +1,43 @@
+{
+    "cmake.options.statusBarVisibility": "visible",
+    "cmake.options.advanced": {
+
+        "build": {
+            "statusBarVisibility": "inherit",
+            "inheritDefault": "visible"
+        },
+        "buildTarget": { 
+            "statusBarVisibility": "visible",
+            "projectStatusVisibility": "visible"
+        }, 
+        "launch": {
+            "statusBarVisibility": "hidden",
+            "inheritDefault": "hidden"
+        },
+
+        "ctest": { 
+            "statusBarVisibility": "hidden",
+            "projectStatusVisibility": "hidden" 
+        }, 
+        "debug": { 
+            "statusBarVisibility": "hidden",
+            "projectStatusVisibility": "hidden" 
+        },
+        "launchTarget": { 
+            "statusBarVisibility": "hidden",
+            "projectStatusVisibility": "hidden" 
+        },
+         "launch": {
+            "statusBarVisibility": "hidden",
+            "projectStatusVisibility": "hidden" 
+        },
+        "workflow": {
+            "statusBarVisibility": "hidden",
+            "projectStatusVisibility": "hidden" 
+        },
+        "cpack": {
+            "statusBarVisibility": "hidden",
+            "projectStatusVisibility": "hidden" 
+        }         
+    }
+}

@@ -1,0 +1,24 @@
+html, body {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  background-color: #f9f9fb;
+  color: #00172b;
+  font-family: 'Work Sans', sans;
+  font-size: .935rem;
+  overflow: hidden;
+  height: 100%;
+}
+
+#app {
+  border: 1px solid #bfc5ca;
+  top: 25px;
+  left: 25px;
+  margin-right: 45px;
+  height: calc(100% - 150px);
+  position: relative;
+}
+
+.hidden { display:none }
+
+
