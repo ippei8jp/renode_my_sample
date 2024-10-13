@@ -10,6 +10,7 @@ make
 cd ..
 ```
 
+
 ## renodeを起動
 ```
 renode script/renode-config.resc
